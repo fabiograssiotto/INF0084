@@ -79,19 +79,35 @@ def setup_llm():
 
 # Não modifique a assinatura da função "main".
 def main(user_query: str):
-    entrypoint_agent_system_message = "" # TODO
-    # Exemplo de configuração de LLM para o agente de entrada
-    #llm_config = {"config_list": [{"model": "gpt-4o-mini", "api_key": os.environ.get("OPENAI_API_KEY")}]}
+    
+    entrypoint_agent_system_message = "You are the entrypoint agent responsible for initiating the conversation."
+    data_fetch_agent_system_message =  """
+            You are an agent responsible for fetching restaurant reviews.
+            You can fetch reviews for a specific restaurant by calling the function `fetch_restaurant_data(restaurant_name: str) -> Dict[str, List[str]]`.
+            The function takes the name of a restaurant as a parameter and returns a dictionary where the key is the restaurant name and the value is a list of reviews for that restaurant.
+            Example: fetch_restaurant_data("Estação Barão")
+        """
 
     # Groq setup
     llm_config = setup_llm()
 
     # O agente principal de entrada/supervisor
+    
     entrypoint_agent = ConversableAgent("entrypoint_agent", 
                                         system_message=entrypoint_agent_system_message, 
-                                        llm_config=llm_config)
-    entrypoint_agent.register_for_llm(name="fetch_restaurant_data", description="Obtém as avaliações de um restaurante específico.")(fetch_restaurant_data)
+                                        llm_config=llm_config,
+                                        max_consecutive_auto_reply=1,
+                                        human_input_mode='NEVER ')
+
     entrypoint_agent.register_for_execution(name="fetch_restaurant_data")(fetch_restaurant_data)
+
+    # O agente responsável por recuperar avaliações.
+    data_fetch_agent = ConversableAgent("data_fetch_agent", 
+                                        system_message=data_fetch_agent_system_message, 
+                                        llm_config=llm_config,
+                                        human_input_mode='NEVER')
+    
+    data_fetch_agent.register_for_llm(name="fetch_restaurant_data", description="Obtém as avaliações de um restaurante específico.")(fetch_restaurant_data)
 
     # TODO
     # Crie mais agentes aqui.
@@ -101,7 +117,8 @@ def main(user_query: str):
     # Se você decidir usar outro padrão de conversação, sinta-se à vontade para ignorar este código.
 
     # Descomente assim que iniciar o chat com pelo menos um agente.
-    # result = entrypoint_agent.initiate_chats([{}])
+    result = entrypoint_agent.initiate_chat(data_fetch_agent, f"Busque a avaliação do restaurante {user_query}", summary_method="last_msg")
+    print(result)
     
 # NÃO modifique o código abaixo.
 if __name__ == "__main__":
