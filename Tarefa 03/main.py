@@ -1,5 +1,5 @@
 from typing import Dict, List
-#from autogen import ConversableAgent
+from autogen import ConversableAgent
 import sys
 import os
 import math
@@ -13,30 +13,7 @@ def fetch_restaurant_data(restaurant_name: str) -> Dict[str, List[str]]:
     # > fetch_restaurant_data("Estação Barão")
     # {"Estação Barão's": ["A comida do Estação Barão foi mediana, sem nada particularmente marcante.", ...]}
 
-    # Dicionátio que armazena o nome do restaurante e suas avaliações
-    restaurant_reviews = {}
-    current_restaurant = None
-
-    # Abre o arquivo restaurantes.txt e cria estrutura para armazenar os dados
-    with open('restaurantes.txt', 'r', encoding='utf-8') as file:
-        for line in file:
-            line = line.strip()
-            if not line:
-                continue
-            # Divide a linha pelo primeiro ponto encontrado
-            parts = line.split('.', 1)
-            if len(parts) == 2:
-                current_restaurant, review = parts
-                current_restaurant = current_restaurant.strip()
-                review = review.strip()
-                if current_restaurant not in restaurant_reviews:
-                    restaurant_reviews[current_restaurant] = []
-                restaurant_reviews[current_restaurant].append(review)
-
-    # Retorna a review do restaurante
-    return {restaurant_name: restaurant_reviews.get(restaurant_name, [])}
-
-
+    pass
 
 def calculate_overall_score(restaurant_name: str, food_scores: List[int], customer_service_scores: List[int]) -> Dict[str, float]:
     # TODO
@@ -49,19 +26,6 @@ def calculate_overall_score(restaurant_name: str, food_scores: List[int], custom
     # {"Applebee's": 5.048}
     # OBSERVAÇÃO: Certifique-se de que a pontuação inclui PELO MENOS 3 casas decimais. Os testes públicos só aceitarão pontuações 
     # que tenham no mínimo 3 casas decimais.
-
-    # Sanity check das notas passadas como parâmetro
-    if len(food_scores) != len(customer_service_scores):
-        raise ValueError("As listas de notas de comida e atendimento ao cliente devem ter o mesmo comprimento.")
-
-    # Número de avaliações
-    N = len(food_scores)
-
-    # Calcula a pontuação geral usando a fórmula fornecida
-    overall_score = sum(math.sqrt(food_scores[i]**2 * customer_service_scores[i]) for i in range(N)) * (1 / (N * math.sqrt(125))) * 10
-
-    # Retorna a pontuação com pelo menos 3 casas decimais
-    return {restaurant_name: round(overall_score, 3)}
 
     pass
 
@@ -99,13 +63,5 @@ def main(user_query: str):
     
 # NÃO modifique o código abaixo.
 if __name__ == "__main__":
-    #assert len(sys.argv) > 1, "Certifique-se de incluir uma consulta para algum restaurante ao executar a função main."
-    #main(sys.argv[1])
-
-    # Teste a função fetch_restaurant_data
-    print(fetch_restaurant_data("Café do Ponto"))
-    print(fetch_restaurant_data("Restaurante inexistente"))
-
-    # Teste da função calculate_overall_score
-    print(calculate_overall_score("Applebee's", [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]))
-    print(calculate_overall_score("Restaurante Exemplo", [5, 5, 5, 5, 5], [5, 5, 5, 5, 5]))
+    assert len(sys.argv) > 1, "Certifique-se de incluir uma consulta para algum restaurante ao executar a função main."
+    main(sys.argv[1])
