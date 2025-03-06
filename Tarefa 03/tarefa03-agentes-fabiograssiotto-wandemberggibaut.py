@@ -1,5 +1,5 @@
 from typing import Dict, List
-#from autogen import ConversableAgent
+from autogen import ConversableAgent
 import sys
 import os
 import math
@@ -62,12 +62,29 @@ def calculate_overall_score(restaurant_name: str, food_scores: List[int], custom
     # Retorna a pontuação com pelo menos 3 casas decimais
     return {restaurant_name: round(overall_score, 3)}
 
+# Não modifique a assinatura da função "main".
+def main(user_query: str):
+    entrypoint_agent_system_message = "" # TODO
+    # Exemplo de configuração de LLM para o agente de entrada
+    llm_config = {"config_list": [{"model": "gpt-4o-mini", "api_key": os.environ.get("OPENAI_API_KEY")}]}
+    # O agente principal de entrada/supervisor
+    entrypoint_agent = ConversableAgent("entrypoint_agent", 
+                                        system_message=entrypoint_agent_system_message, 
+                                        llm_config=llm_config)
+    entrypoint_agent.register_for_llm(name="fetch_restaurant_data", description="Obtém as avaliações de um restaurante específico.")(fetch_restaurant_data)
+    entrypoint_agent.register_for_execution(name="fetch_restaurant_data")(fetch_restaurant_data)
+
+    # TODO
+    # Crie mais agentes aqui.
+
+    # TODO
+    # Preencha o argumento de `initiate_chats` abaixo, chamando os agentes corretos sequencialmente.
+    # Se você decidir usar outro padrão de conversação, sinta-se à vontade para ignorar este código.
+
+    # Descomente assim que iniciar o chat com pelo menos um agente.
+    # result = entrypoint_agent.initiate_chats([{}])
+    
+# NÃO modifique o código abaixo.
 if __name__ == "__main__":
-
-    # Teste a função fetch_restaurant_data
-    print(fetch_restaurant_data("Café do Ponto"))
-    print(fetch_restaurant_data("Restaurante inexistente"))
-
-    # Teste da função calculate_overall_score
-    print(calculate_overall_score("Applebee's", [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]))
-    print(calculate_overall_score("Restaurante Exemplo", [5, 5, 5, 5, 5], [5, 5, 5, 5, 5]))
+    assert len(sys.argv) > 1, "Certifique-se de incluir uma consulta para algum restaurante ao executar a função main."
+    main(sys.argv[1])
