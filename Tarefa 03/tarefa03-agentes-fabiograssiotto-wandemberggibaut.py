@@ -3,6 +3,7 @@ from autogen import ConversableAgent
 import sys
 import os
 import math
+import getpass
 
 def fetch_restaurant_data(restaurant_name: str) -> Dict[str, List[str]]:
     # TODO
@@ -62,11 +63,29 @@ def calculate_overall_score(restaurant_name: str, food_scores: List[int], custom
     # Retorna a pontuação com pelo menos 3 casas decimais
     return {restaurant_name: round(overall_score, 3)}
 
+def setup_llm():
+    api_key = os.environ.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY") or getpass.getpass("Enter your Groq API key: ")
+
+    config_list = [
+        {
+            'model': 'llama-3.3-70b-versatile',
+            'api_key': api_key,
+            "api_type": "groq"
+        },
+    ]
+    llm_config = {"config_list": config_list}
+    return llm_config
+    
+
 # Não modifique a assinatura da função "main".
 def main(user_query: str):
     entrypoint_agent_system_message = "" # TODO
     # Exemplo de configuração de LLM para o agente de entrada
-    llm_config = {"config_list": [{"model": "gpt-4o-mini", "api_key": os.environ.get("OPENAI_API_KEY")}]}
+    #llm_config = {"config_list": [{"model": "gpt-4o-mini", "api_key": os.environ.get("OPENAI_API_KEY")}]}
+
+    # Groq setup
+    llm_config = setup_llm()
+
     # O agente principal de entrada/supervisor
     entrypoint_agent = ConversableAgent("entrypoint_agent", 
                                         system_message=entrypoint_agent_system_message, 
