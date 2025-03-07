@@ -80,12 +80,28 @@ def setup_llm():
 # Não modifique a assinatura da função "main".
 def main(user_query: str):
     
-    entrypoint_agent_system_message = "You are the entrypoint agent responsible for initiating the conversation."
+    entrypoint_agent_system_message = "Você é o agente de entrada responsável por iniciar a conversa."
     data_fetch_agent_system_message =  """
-            You are an agent responsible for fetching restaurant reviews.
-            You can fetch reviews for a specific restaurant by calling the function `fetch_restaurant_data(restaurant_name: str) -> Dict[str, List[str]]`.
-            The function takes the name of a restaurant as a parameter and returns a dictionary where the key is the restaurant name and the value is a list of reviews for that restaurant.
-            Example: fetch_restaurant_data("Estação Barão")
+            Você é um agente responsável por buscar avaliações de restaurantes.
+            Você pode buscar avaliações de um restaurante específico chamando a função `fetch_restaurant_data(restaurant_name: str) -> Dict[str, List[str]]`.
+            A função recebe o nome de um restaurante como parâmetro e retorna um dicionário onde a chave é o nome do restaurante e o valor é uma lista de avaliações para esse restaurante.
+            Exemplo: fetch_restaurant_data("Estação Barão")
+        """
+    review_analysis_agent_system_message =  """"
+            Você é um agente responsável por analisar as avaliações de um restaurante e converter adjetivos em escores.
+            Analise as avaliações e converta os adjetivos em escores conforme a seguinte escala:
+            a. 1/5: horrível, nojento, terrível.
+            b. 2/5: ruim, desagradável, ofensivo.
+            c. 3/5: mediano, sem graça, irrelevante.
+            d. 4/5: bom, agradável, satisfatório.
+            e. 5/5: incrível, impressionante, surpreendente.
+            Retorne com o score para cada avaliação passada como entrada.
+        """
+    score_agent_system_message =  """
+            Você é um agente responsável pelo cálculo final da pontuação de um restaurante.
+            Você pode calcular a pontuação geral de um restaurante chamando a função `calculate_overall_score(restaurant_name: str, food_scores: List[int], customer_service_scores: List[int]) -> Dict[str, float]`.
+            A função recebe o nome do restaurante, uma lista de notas da comida (de 1 a 5) e uma lista de notas do atendimento ao cliente (de 1 a 5) como parâmetros e retorna um dicionário onde a chave é o nome do restaurante e o valor é a pontuação geral do restaurante.
+            Exemplo: calculate_overall_score("Applebee's", [1, 2, 3, 4, 5], [1, 2, 3, 4, 5])
         """
 
     # Groq setup
@@ -100,8 +116,14 @@ def main(user_query: str):
                                         human_input_mode='NEVER ')
 
     entrypoint_agent.register_for_execution(name="fetch_restaurant_data")(fetch_restaurant_data)
+    entrypoint_agent.register_for_execution(name="calculate_overall_score")(calculate_overall_score)
 
-    # O agente responsável por recuperar avaliações.
+    # 
+    # TODO
+    # Crie mais agentes aqui.
+
+    # Criar o agente data_fetch_agent que seja responsável por recuperar avaliações
+    # e estar ligado à função fetch_restaurant_data
     data_fetch_agent = ConversableAgent("data_fetch_agent", 
                                         system_message=data_fetch_agent_system_message, 
                                         llm_config=llm_config,
@@ -109,8 +131,28 @@ def main(user_query: str):
     
     data_fetch_agent.register_for_llm(name="fetch_restaurant_data", description="Obtém as avaliações de um restaurante específico.")(fetch_restaurant_data)
 
-    # TODO
-    # Crie mais agentes aqui.
+    # Criar um agente review_analysis_agent que analisa as avaliações e converte
+    # adjetivos em escores conforme a seguinte escala (não modificar esta escala, pois
+    # ela afeta o cálculo final da pontuação):
+    # a. 1/5: horrível, nojento, terrível.
+    # b. 2/5: ruim, desagradável, ofensivo.
+    # c. 3/5: mediano, sem graça, irrelevante.
+    # d. 4/5: bom, agradável, satisfatório.
+    # e. 5/5: incrível, impressionante, surpreendente.
+    review_analysis_agent = ConversableAgent("review_analysis_agent", 
+                                            system_message=review_analysis_agent_system_message, 
+                                            llm_config=llm_config,
+                                            human_input_mode='NEVER')
+
+    # Criar um agente score_agent que seja responsável pelo cálculo final da
+    # pontuação, vinculado à função calculate_overall_score.
+    score_agent = ConversableAgent("score_agent", 
+                                    system_message=score_agent_system_message, 
+                                    llm_config=llm_config,
+                                    human_input_mode='NEVER')
+    
+    score_agent.register_for_llm(name="calculate_overall_score", description="Realiza o cálculo final da pontuação do restaurante.")(calculate_overall_score)
+
 
     # TODO
     # Preencha o argumento de `initiate_chats` abaixo, chamando os agentes corretos sequencialmente.
@@ -118,6 +160,10 @@ def main(user_query: str):
 
     # Descomente assim que iniciar o chat com pelo menos um agente.
     result = entrypoint_agent.initiate_chat(data_fetch_agent, f"Busque a avaliação do restaurante {user_query}", summary_method="last_msg")
+
+    result = review_analysis_agent.initiate_chat(review_analysis_agent, result, summary_method="last_msg")
+    result = score_agent.initiate_chat(score_agent, result, summary_method="last_msg")
+
     print(result)
     
 # NÃO modifique o código abaixo.
