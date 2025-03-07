@@ -119,10 +119,6 @@ def main(user_query: str):
     entrypoint_agent.register_for_execution(name="fetch_restaurant_data")(fetch_restaurant_data)
     entrypoint_agent.register_for_execution(name="calculate_overall_score")(calculate_overall_score)
 
-    # 
-    # TODO
-    # Crie mais agentes aqui.
-
     # Criar o agente data_fetch_agent que seja responsável por recuperar avaliações
     # e estar ligado à função fetch_restaurant_data
     data_fetch_agent = ConversableAgent("data_fetch_agent", 
@@ -154,18 +150,28 @@ def main(user_query: str):
     
     score_agent.register_for_llm(name="calculate_overall_score", description="Realiza o cálculo final da pontuação do restaurante.")(calculate_overall_score)
 
-
-    # TODO
-    # Preencha o argumento de `initiate_chats` abaixo, chamando os agentes corretos sequencialmente.
-    # Se você decidir usar outro padrão de conversação, sinta-se à vontade para ignorar este código.
-
-    # Descomente assim que iniciar o chat com pelo menos um agente.
-    result = entrypoint_agent.initiate_chat(data_fetch_agent, f"Busque a avaliação do restaurante {user_query}", summary_method="last_msg")
-
-    result = entrypoint_agent.initiate_chat(review_analysis_agent, result, summary_method="last_msg")
-    result = entrypoint_agent.initiate_chat(score_agent, result, summary_method="last_msg")
-
-    print(result)
+    msg = "Busque a avaliação do restaurante " + user_query + "."
+    chat_results = entrypoint_agent.initiate_chats(
+    [{
+            "recipient": data_fetch_agent,
+            "message": msg,
+            "max_turns": 1,
+            "summary_method": "last_msg",
+        },
+        {
+            "recipient": review_analysis_agent,
+            "message": "Estas são as avaliações do restaurante " + user_query + ".",
+            "max_turns": 1,
+            "summary_method": "last_msg",
+        },
+        {
+            "recipient": score_agent,
+            "message": "Estas são as notas de comida e atendimento ao cliente do restaurante " + user_query + ".",
+            "max_turns": 1,
+            "summary_method": "last_msg",
+        }
+    ])
+    print(chat_results)
     
 # NÃO modifique o código abaixo.
 if __name__ == "__main__":
