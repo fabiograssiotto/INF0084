@@ -103,6 +103,7 @@ def main(user_query: str):
             Você pode calcular a pontuação geral de um restaurante chamando a função `calculate_overall_score(restaurant_name: str, food_scores: List[int], customer_service_scores: List[int]) -> Dict[str, float]`.
             A função recebe o nome do restaurante, uma lista de notas da comida (de 1 a 5) e uma lista de notas do atendimento ao cliente (de 1 a 5) como parâmetros e retorna um dicionário onde a chave é o nome do restaurante e o valor é a pontuação geral do restaurante.
             Exemplo: calculate_overall_score("Applebee's", [1, 2, 3, 4, 5], [1, 2, 3, 4, 5])
+            Retorne apenas com a pontuação geral do restaurante.
         """
 
     # Groq setup
