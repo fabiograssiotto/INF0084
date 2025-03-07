@@ -79,7 +79,7 @@ def setup_llm():
 
 # Não modifique a assinatura da função "main".
 def main(user_query: str):
-    
+
     entrypoint_agent_system_message = "Você é o agente de entrada responsável por iniciar a conversa."
     data_fetch_agent_system_message =  """
             Você é um agente responsável por buscar avaliações de restaurantes.
@@ -95,7 +95,8 @@ def main(user_query: str):
             c. 3/5: mediano, sem graça, irrelevante.
             d. 4/5: bom, agradável, satisfatório.
             e. 5/5: incrível, impressionante, surpreendente.
-            Retorne com o score para cada avaliação passada como entrada.
+            Retorne apenas com dois conjuntos de listas de notas de comida e atendimento ao cliente, cada lista com 5 notas no máximo.
+            As notas vazias retorne com zeros.
         """
     score_agent_system_message =  """
             Você é um agente responsável pelo cálculo final da pontuação de um restaurante.
@@ -113,7 +114,7 @@ def main(user_query: str):
                                         system_message=entrypoint_agent_system_message, 
                                         llm_config=llm_config,
                                         max_consecutive_auto_reply=1,
-                                        human_input_mode='NEVER ')
+                                        human_input_mode='NEVER')
 
     entrypoint_agent.register_for_execution(name="fetch_restaurant_data")(fetch_restaurant_data)
     entrypoint_agent.register_for_execution(name="calculate_overall_score")(calculate_overall_score)
@@ -161,8 +162,8 @@ def main(user_query: str):
     # Descomente assim que iniciar o chat com pelo menos um agente.
     result = entrypoint_agent.initiate_chat(data_fetch_agent, f"Busque a avaliação do restaurante {user_query}", summary_method="last_msg")
 
-    result = review_analysis_agent.initiate_chat(review_analysis_agent, result, summary_method="last_msg")
-    result = score_agent.initiate_chat(score_agent, result, summary_method="last_msg")
+    result = entrypoint_agent.initiate_chat(review_analysis_agent, result, summary_method="last_msg")
+    result = entrypoint_agent.initiate_chat(score_agent, result, summary_method="last_msg")
 
     print(result)
     
