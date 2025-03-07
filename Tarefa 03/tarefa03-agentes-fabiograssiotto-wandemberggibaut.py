@@ -156,19 +156,18 @@ def main(user_query: str):
     [{
             "recipient": data_fetch_agent,
             "message": msg,
-            "max_turns": 1,
+            "clear_history": True,
+            "silent": False,
             "summary_method": "last_msg",
         },
         {
             "recipient": review_analysis_agent,
             "message": "Estas são as avaliações do restaurante " + user_query + ".",
-            "max_turns": 1,
             "summary_method": "last_msg",
         },
         {
             "recipient": score_agent,
             "message": "Estas são as notas de comida e atendimento ao cliente do restaurante " + user_query + ".",
-            "max_turns": 1,
             "summary_method": "last_msg",
         }
     ])
