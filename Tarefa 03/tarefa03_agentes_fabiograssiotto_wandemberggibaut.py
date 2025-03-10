@@ -1,5 +1,5 @@
 from typing import Dict, List
-from autogen import ConversableAgent
+from autogen import ConversableAgent, AssistantAgent
 import sys
 import os
 import math
@@ -58,7 +58,12 @@ def calculate_overall_score(restaurant_name: str, food_scores: List[int], custom
     N = len(food_scores)
 
     # Calcula a pontuação geral usando a fórmula fornecida
-    overall_score = sum(math.sqrt(food_scores[i]**2 * customer_service_scores[i]) for i in range(N)) * (1 / (N * math.sqrt(125))) * 10
+    overall_score = sum([math.sqrt(food_scores[i]**2 * customer_service_scores[i]) for i in range(N)]) * (1 / (N * math.sqrt(125))) * 10
+
+    print("soma: +", sum([math.sqrt(food_scores[i]**2 * customer_service_scores[i]) for i in range(N)]))
+    print("N: ", N)
+    print("overall_score: ", overall_score)
+
 
     # Retorna a pontuação com pelo menos 3 casas decimais
     return {restaurant_name: round(overall_score, 3)}
@@ -66,21 +71,28 @@ def calculate_overall_score(restaurant_name: str, food_scores: List[int], custom
 def setup_llm():
     api_key = os.environ.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY") or getpass.getpass("Enter your Groq API key: ")
 
-    config_list = [
+    '''config_list = [
         {
             'model': 'llama-3.3-70b-versatile',
             'api_key': api_key,
             "api_type": "groq"
         },
+    ]'''
+
+    config_list = [
+        {
+            'model': 'gpt-4o-mini',
+            'api_key': os.environ.get("OPENAI_API_KEY")
+        },
     ]
-    llm_config = {"config_list": config_list}
+    llm_config = {"config_list": config_list, "temperature": 0}
     return llm_config
     
 
 # Não modifique a assinatura da função "main".
 def main(user_query: str):
 
-    entrypoint_agent_system_message = "Você é o agente de entrada responsável por iniciar a conversa."
+    entrypoint_agent_system_message = "Você é o agente de entrada responsável por iniciar a conversa. Uma vez que você receba a resposta de um agente, você deve encaminhar a resposta obtida para o próximo agente na cadeia."
     data_fetch_agent_system_message =  """
             Você é um agente responsável por buscar avaliações de restaurantes.
             Você pode buscar avaliações de um restaurante específico chamando a função `fetch_restaurant_data(restaurant_name: str) -> Dict[str, List[str]]`.
@@ -90,13 +102,18 @@ def main(user_query: str):
     review_analysis_agent_system_message =  """"
             Você é um agente responsável por analisar as avaliações de um restaurante e converter adjetivos em escores.
             Analise as avaliações e converta os adjetivos em escores conforme a seguinte escala:
-            a. 1/5: horrível, nojento, terrível.
-            b. 2/5: ruim, desagradável, ofensivo.
-            c. 3/5: mediano, sem graça, irrelevante.
-            d. 4/5: bom, agradável, satisfatório.
-            e. 5/5: incrível, impressionante, surpreendente.
+            1: horrível, nojento, terrível.
+            2: ruim, desagradável, ofensivo.
+            3: mediano, sem graça, irrelevante.
+            4: bom, agradável, satisfatório.
+            5: incrível, impressionante, surpreendente.
             Retorne apenas com dois conjuntos de listas de notas de comida e atendimento ao cliente, cada lista com 5 notas no máximo.
             As notas vazias retorne com zeros.
+
+            Exemplo de saída
+
+            'Notas de comida: [4]  
+             Notas de atendimento: [3]'
         """
     score_agent_system_message =  """
             Você é um agente responsável pelo cálculo final da pontuação de um restaurante.
@@ -117,17 +134,17 @@ def main(user_query: str):
                                         max_consecutive_auto_reply=1,
                                         human_input_mode='NEVER')
 
-    entrypoint_agent.register_for_execution(name="fetch_restaurant_data")(fetch_restaurant_data)
-    entrypoint_agent.register_for_execution(name="calculate_overall_score")(calculate_overall_score)
+    
 
     # Criar o agente data_fetch_agent que seja responsável por recuperar avaliações
     # e estar ligado à função fetch_restaurant_data
-    data_fetch_agent = ConversableAgent("data_fetch_agent", 
+    data_fetch_agent = AssistantAgent("data_fetch_agent", 
                                         system_message=data_fetch_agent_system_message, 
                                         llm_config=llm_config,
                                         human_input_mode='NEVER')
     
-    data_fetch_agent.register_for_llm(name="fetch_restaurant_data", description="Obtém as avaliações de um restaurante específico.")(fetch_restaurant_data)
+    
+    #data_fetch_agent.register_for_execution(name="fetch_restaurant_data")(fetch_restaurant_data)
 
     # Criar um agente review_analysis_agent que analisa as avaliações e converte
     # adjetivos em escores conforme a seguinte escala (não modificar esta escala, pois
@@ -137,42 +154,66 @@ def main(user_query: str):
     # c. 3/5: mediano, sem graça, irrelevante.
     # d. 4/5: bom, agradável, satisfatório.
     # e. 5/5: incrível, impressionante, surpreendente.
-    review_analysis_agent = ConversableAgent("review_analysis_agent", 
+    review_analysis_agent = AssistantAgent("review_analysis_agent", 
                                             system_message=review_analysis_agent_system_message, 
                                             llm_config=llm_config,
+                                            max_consecutive_auto_reply=1,
+                                            is_termination_msg=lambda msg: "notas de comida" in msg["content"].lower(),
                                             human_input_mode='NEVER')
 
     # Criar um agente score_agent que seja responsável pelo cálculo final da
     # pontuação, vinculado à função calculate_overall_score.
-    score_agent = ConversableAgent("score_agent", 
+
+
+
+    score_agent = AssistantAgent("score_agent", 
                                     system_message=score_agent_system_message, 
                                     llm_config=llm_config,
                                     human_input_mode='NEVER')
     
-    score_agent.register_for_llm(name="calculate_overall_score", description="Realiza o cálculo final da pontuação do restaurante.")(calculate_overall_score)
+    
+    #score_agent.register_for_execution(name="calculate_overall_score")(calculate_overall_score)
 
-    msg = "Busque a avaliação do restaurante " + user_query + "."
+    #entrypoint_agent.register_for_llm(name="fetch_restaurant_data", description="Obtém as avaliações de um restaurante específico.")(fetch_restaurant_data)
+    #data_fetch_agent.register_for_execution(name="fetch_restaurant_data")(fetch_restaurant_data)
+
+    #entrypoint_agent.register_for_llm(name="calculate_overall_score", description="Realiza o cálculo final da pontuação do restaurante com base nas avaliações de comida e atendimento.")(calculate_overall_score)
+    #score_agent.register_for_execution(name="calculate_overall_score")(calculate_overall_score)
+
+    data_fetch_agent.register_for_llm(name="fetch_restaurant_data", description="Obtém as avaliações de um restaurante específico.")(fetch_restaurant_data)
+    entrypoint_agent.register_for_execution(name="fetch_restaurant_data")(fetch_restaurant_data)
+
+    score_agent.register_for_llm(name="calculate_overall_score", description="Realiza o cálculo final da pontuação do restaurante.")(calculate_overall_score)
+    entrypoint_agent.register_for_execution(name="calculate_overall_score")(calculate_overall_score)
+
+    
     chat_results = entrypoint_agent.initiate_chats(
     [{
             "recipient": data_fetch_agent,
-            "message": msg,
+            "message": user_query,
             "clear_history": True,
             "silent": False,
+            "max_turns": 2,
             "summary_method": "last_msg",
         },
         {
             "recipient": review_analysis_agent,
-            "message": "Estas são as avaliações do restaurante " + user_query + ".",
+            "message": "Quantifique as avaliações do restaurante requisitado.",
+            "max_turns": 1,
             "summary_method": "last_msg",
         },
         {
             "recipient": score_agent,
-            "message": "Estas são as notas de comida e atendimento ao cliente do restaurante " + user_query + ".",
+            "message": "Calcule a pontuação geral com base nos valores de comida e atendimento. O valor numérico deve ser arredondado para 3 casas decimais.",
+            "max_turns": 2,
             "summary_method": "last_msg",
         }
     ])
-    print(chat_results)
+    print(chat_results[-1].summary)
     
+
+    #reflection_with_llm
+
 # NÃO modifique o código abaixo.
 if __name__ == "__main__":
     assert len(sys.argv) > 1, "Certifique-se de incluir uma consulta para algum restaurante ao executar a função main."

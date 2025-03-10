@@ -1,7 +1,7 @@
 import sys, os
 import re
 import json
-from solucao import main 
+from tarefa03_agentes_fabiograssiotto_wandemberggibaut import main 
 from typing import List
 
 class TerminalColors:
