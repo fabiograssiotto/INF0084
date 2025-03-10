@@ -10,7 +10,7 @@ Qual é a avaliação média do Bob's?
 --------------------------------------------------------------------------------
 data_fetch_agent (to entrypoint_agent):
 
-***** Suggested tool call (call_mj5OnYw5NWt3JUH94QpzmZNZ): fetch_restaurant_data *****
+***** Suggested tool call (call_76rx230AvomLcFmAtavOeLkP): fetch_restaurant_data *****
 Arguments: 
 {"restaurant_name":"Bob's"}
 **************************************************************************************
@@ -18,11 +18,11 @@ Arguments:
 --------------------------------------------------------------------------------
 
 >>>>>>>> EXECUTING FUNCTION fetch_restaurant_data...
-Call ID: call_mj5OnYw5NWt3JUH94QpzmZNZ
+Call ID: call_76rx230AvomLcFmAtavOeLkP
 Input arguments: {'restaurant_name': "Bob's"}
 entrypoint_agent (to data_fetch_agent):
 
-***** Response from calling tool (call_mj5OnYw5NWt3JUH94QpzmZNZ) *****
+***** Response from calling tool (call_76rx230AvomLcFmAtavOeLkP) *****
 {"Bob's": ['A comida é mediana, nada de especial, e o atendimento ruim. Os funcionários parecem desagradáveis e o serviço é apressado.']}
 **********************************************************************
 
@@ -31,7 +31,7 @@ data_fetch_agent (to entrypoint_agent):
 
 A avaliação do Bob's é a seguinte: "A comida é mediana, nada de especial, e o atendimento ruim. Os funcionários parecem desagradáveis e o serviço é apressado." 
 
-Com base nessa única avaliação, a média pode ser considerada negativa.
+Com base nessa única avaliação, a média seria considerada negativa.
 
 --------------------------------------------------------------------------------
 
@@ -45,7 +45,7 @@ Quantifique as avaliações do restaurante requisitado.
 Context: 
 A avaliação do Bob's é a seguinte: "A comida é mediana, nada de especial, e o atendimento ruim. Os funcionários parecem desagradáveis e o serviço é apressado." 
 
-Com base nessa única avaliação, a média pode ser considerada negativa.
+Com base nessa única avaliação, a média seria considerada negativa.
 
 --------------------------------------------------------------------------------
 review_analysis_agent (to entrypoint_agent):
@@ -65,14 +65,14 @@ Calcule a pontuação geral com base nos valores de comida e atendimento. O valo
 Context: 
 A avaliação do Bob's é a seguinte: "A comida é mediana, nada de especial, e o atendimento ruim. Os funcionários parecem desagradáveis e o serviço é apressado." 
 
-Com base nessa única avaliação, a média pode ser considerada negativa.
+Com base nessa única avaliação, a média seria considerada negativa.
 Notas de comida: [3]  
 Notas de atendimento: [2]
 
 --------------------------------------------------------------------------------
 score_agent (to entrypoint_agent):
 
-***** Suggested tool call (call_FPovexyKi0CIFGKzF09G3z7y): calculate_overall_score *****
+***** Suggested tool call (call_ZYMJXdy6GhtKk3pPPXqGxkgi): calculate_overall_score *****
 Arguments: 
 {"restaurant_name":"Bob's","food_scores":[3],"customer_service_scores":[2]}
 ****************************************************************************************
@@ -80,14 +80,14 @@ Arguments:
 --------------------------------------------------------------------------------
 
 >>>>>>>> EXECUTING FUNCTION calculate_overall_score...
-Call ID: call_FPovexyKi0CIFGKzF09G3z7y
+Call ID: call_ZYMJXdy6GhtKk3pPPXqGxkgi
 Input arguments: {'restaurant_name': "Bob's", 'food_scores': [3], 'customer_service_scores': [2]}
 soma: + 4.242640687119285
 N:  1
 overall_score:  3.794733192202055
 entrypoint_agent (to score_agent):
 
-***** Response from calling tool (call_FPovexyKi0CIFGKzF09G3z7y) *****
+***** Response from calling tool (call_ZYMJXdy6GhtKk3pPPXqGxkgi) *****
 {"Bob's": 3.795}
 **********************************************************************
 
@@ -112,7 +112,7 @@ Qual é a avaliação média do Paris 6?
 --------------------------------------------------------------------------------
 data_fetch_agent (to entrypoint_agent):
 
-***** Suggested tool call (call_A9HjqzEZC3WyA5PDtN5jGOSk): fetch_restaurant_data *****
+***** Suggested tool call (call_3KalBuCZuhtLhLRsQ353JExT): fetch_restaurant_data *****
 Arguments: 
 {"restaurant_name":"Paris 6"}
 **************************************************************************************
@@ -120,20 +120,20 @@ Arguments:
 --------------------------------------------------------------------------------
 
 >>>>>>>> EXECUTING FUNCTION fetch_restaurant_data...
-Call ID: call_A9HjqzEZC3WyA5PDtN5jGOSk
+Call ID: call_3KalBuCZuhtLhLRsQ353JExT
 Input arguments: {'restaurant_name': 'Paris 6'}
 entrypoint_agent (to data_fetch_agent):
 
-***** Response from calling tool (call_A9HjqzEZC3WyA5PDtN5jGOSk) *****
+***** Response from calling tool (call_3KalBuCZuhtLhLRsQ353JExT) *****
 {'Paris 6': ['Cardápio variado e pratos bons. Atendimento mediano, mas as longas esperas podem ser um problema.']}
 **********************************************************************
 
 --------------------------------------------------------------------------------
 data_fetch_agent (to entrypoint_agent):
 
-A avaliação do Paris 6 é a seguinte: "Cardápio variado e pratos bons. Atendimento mediano, mas as longas esperas podem ser um problema." 
+A avaliação do Paris 6 é: "Cardápio variado e pratos bons. Atendimento mediano, mas as longas esperas podem ser um problema." 
 
-Como há apenas uma avaliação, não é possível calcular uma média, mas a opinião expressa é positiva em relação ao cardápio e aos pratos.
+Como há apenas uma avaliação, não é possível calcular uma média, mas a opinião expressa é positiva em relação ao cardápio e aos pratos, embora mencione problemas com o atendimento e as esperas.
 
 --------------------------------------------------------------------------------
 
@@ -145,9 +145,9 @@ entrypoint_agent (to review_analysis_agent):
 
 Quantifique as avaliações do restaurante requisitado.
 Context: 
-A avaliação do Paris 6 é a seguinte: "Cardápio variado e pratos bons. Atendimento mediano, mas as longas esperas podem ser um problema." 
+A avaliação do Paris 6 é: "Cardápio variado e pratos bons. Atendimento mediano, mas as longas esperas podem ser um problema." 
 
-Como há apenas uma avaliação, não é possível calcular uma média, mas a opinião expressa é positiva em relação ao cardápio e aos pratos.
+Como há apenas uma avaliação, não é possível calcular uma média, mas a opinião expressa é positiva em relação ao cardápio e aos pratos, embora mencione problemas com o atendimento e as esperas.
 
 --------------------------------------------------------------------------------
 review_analysis_agent (to entrypoint_agent):
@@ -165,16 +165,16 @@ entrypoint_agent (to score_agent):
 
 Calcule a pontuação geral com base nos valores de comida e atendimento. O valor numérico deve ser arredondado para 3 casas decimais.
 Context: 
-A avaliação do Paris 6 é a seguinte: "Cardápio variado e pratos bons. Atendimento mediano, mas as longas esperas podem ser um problema." 
+A avaliação do Paris 6 é: "Cardápio variado e pratos bons. Atendimento mediano, mas as longas esperas podem ser um problema." 
 
-Como há apenas uma avaliação, não é possível calcular uma média, mas a opinião expressa é positiva em relação ao cardápio e aos pratos.
+Como há apenas uma avaliação, não é possível calcular uma média, mas a opinião expressa é positiva em relação ao cardápio e aos pratos, embora mencione problemas com o atendimento e as esperas.
 Notas de comida: [4]  
 Notas de atendimento: [3]
 
 --------------------------------------------------------------------------------
 score_agent (to entrypoint_agent):
 
-***** Suggested tool call (call_qKeMCor9PARMInxwS8EXojNg): calculate_overall_score *****
+***** Suggested tool call (call_tzaOdxYlchMqtmINETTlSUwh): calculate_overall_score *****
 Arguments: 
 {"restaurant_name":"Paris 6","food_scores":[4],"customer_service_scores":[3]}
 ****************************************************************************************
@@ -182,14 +182,14 @@ Arguments:
 --------------------------------------------------------------------------------
 
 >>>>>>>> EXECUTING FUNCTION calculate_overall_score...
-Call ID: call_qKeMCor9PARMInxwS8EXojNg
+Call ID: call_tzaOdxYlchMqtmINETTlSUwh
 Input arguments: {'restaurant_name': 'Paris 6', 'food_scores': [4], 'customer_service_scores': [3]}
 soma: + 6.928203230275509
 N:  1
 overall_score:  6.196773353931867
 entrypoint_agent (to score_agent):
 
-***** Response from calling tool (call_qKeMCor9PARMInxwS8EXojNg) *****
+***** Response from calling tool (call_tzaOdxYlchMqtmINETTlSUwh) *****
 {'Paris 6': 6.197}
 **********************************************************************
 
@@ -214,7 +214,7 @@ Quão bom é o restaurante KFC?
 --------------------------------------------------------------------------------
 data_fetch_agent (to entrypoint_agent):
 
-***** Suggested tool call (call_qJIQPbGpkbuij1xNxZwN271y): fetch_restaurant_data *****
+***** Suggested tool call (call_2q87Y8yi9aOLgTFkuHOuF0qA): fetch_restaurant_data *****
 Arguments: 
 {"restaurant_name":"KFC"}
 **************************************************************************************
@@ -222,11 +222,11 @@ Arguments:
 --------------------------------------------------------------------------------
 
 >>>>>>>> EXECUTING FUNCTION fetch_restaurant_data...
-Call ID: call_qJIQPbGpkbuij1xNxZwN271y
+Call ID: call_2q87Y8yi9aOLgTFkuHOuF0qA
 Input arguments: {'restaurant_name': 'KFC'}
 entrypoint_agent (to data_fetch_agent):
 
-***** Response from calling tool (call_qJIQPbGpkbuij1xNxZwN271y) *****
+***** Response from calling tool (call_2q87Y8yi9aOLgTFkuHOuF0qA) *****
 {'KFC': ['As asinhas de frango são medianas, algumas opções de sabor são melhores que outras. Atendimento sem grandes destaques.']}
 **********************************************************************
 
@@ -270,7 +270,7 @@ Notas de atendimento: [3]
 --------------------------------------------------------------------------------
 score_agent (to entrypoint_agent):
 
-***** Suggested tool call (call_7g3zbz3YXdPNsiSjHBemsnCT): calculate_overall_score *****
+***** Suggested tool call (call_U1MgBbsMzXD6VaCWBZEBq7o0): calculate_overall_score *****
 Arguments: 
 {"restaurant_name":"KFC","food_scores":[3],"customer_service_scores":[3]}
 ****************************************************************************************
@@ -278,14 +278,14 @@ Arguments:
 --------------------------------------------------------------------------------
 
 >>>>>>>> EXECUTING FUNCTION calculate_overall_score...
-Call ID: call_7g3zbz3YXdPNsiSjHBemsnCT
+Call ID: call_U1MgBbsMzXD6VaCWBZEBq7o0
 Input arguments: {'restaurant_name': 'KFC', 'food_scores': [3], 'customer_service_scores': [3]}
 soma: + 5.196152422706632
 N:  1
 overall_score:  4.6475800154489
 entrypoint_agent (to score_agent):
 
-***** Response from calling tool (call_7g3zbz3YXdPNsiSjHBemsnCT) *****
+***** Response from calling tool (call_U1MgBbsMzXD6VaCWBZEBq7o0) *****
 {'KFC': 4.648}
 **********************************************************************
 
@@ -310,7 +310,7 @@ Qual é a avaliação média do China in Box?
 --------------------------------------------------------------------------------
 data_fetch_agent (to entrypoint_agent):
 
-***** Suggested tool call (call_VtgpAcY3kIcbTemvaqP4zrOM): fetch_restaurant_data *****
+***** Suggested tool call (call_EcEwdd8Nh0nooyKPtDEd1Grp): fetch_restaurant_data *****
 Arguments: 
 {"restaurant_name":"China in Box"}
 **************************************************************************************
@@ -318,18 +318,18 @@ Arguments:
 --------------------------------------------------------------------------------
 
 >>>>>>>> EXECUTING FUNCTION fetch_restaurant_data...
-Call ID: call_VtgpAcY3kIcbTemvaqP4zrOM
+Call ID: call_EcEwdd8Nh0nooyKPtDEd1Grp
 Input arguments: {'restaurant_name': 'China in Box'}
 entrypoint_agent (to data_fetch_agent):
 
-***** Response from calling tool (call_VtgpAcY3kIcbTemvaqP4zrOM) *****
+***** Response from calling tool (call_EcEwdd8Nh0nooyKPtDEd1Grp) *****
 {'China in Box': ['Comida chinesa-americana mediana, mas sem surpresas. Atendimento rápido, mas sem muita atenção ao cliente.']}
 **********************************************************************
 
 --------------------------------------------------------------------------------
 data_fetch_agent (to entrypoint_agent):
 
-A avaliação do "China in Box" é a seguinte: "Comida chinesa-americana mediana, mas sem surpresas. Atendimento rápido, mas sem muita atenção ao cliente." 
+A avaliação do China in Box é a seguinte: "Comida chinesa-americana mediana, mas sem surpresas. Atendimento rápido, mas sem muita atenção ao cliente." 
 
 Parece que a avaliação é um pouco negativa, destacando a média qualidade da comida e a falta de atenção no atendimento.
 
@@ -343,7 +343,7 @@ entrypoint_agent (to review_analysis_agent):
 
 Quantifique as avaliações do restaurante requisitado.
 Context: 
-A avaliação do "China in Box" é a seguinte: "Comida chinesa-americana mediana, mas sem surpresas. Atendimento rápido, mas sem muita atenção ao cliente." 
+A avaliação do China in Box é a seguinte: "Comida chinesa-americana mediana, mas sem surpresas. Atendimento rápido, mas sem muita atenção ao cliente." 
 
 Parece que a avaliação é um pouco negativa, destacando a média qualidade da comida e a falta de atenção no atendimento.
 
@@ -351,7 +351,7 @@ Parece que a avaliação é um pouco negativa, destacando a média qualidade da 
 review_analysis_agent (to entrypoint_agent):
 
 Notas de comida: [3]  
-Notas de atendimento: [4]
+Notas de atendimento: [3]
 
 --------------------------------------------------------------------------------
 
@@ -363,40 +363,40 @@ entrypoint_agent (to score_agent):
 
 Calcule a pontuação geral com base nos valores de comida e atendimento. O valor numérico deve ser arredondado para 3 casas decimais.
 Context: 
-A avaliação do "China in Box" é a seguinte: "Comida chinesa-americana mediana, mas sem surpresas. Atendimento rápido, mas sem muita atenção ao cliente." 
+A avaliação do China in Box é a seguinte: "Comida chinesa-americana mediana, mas sem surpresas. Atendimento rápido, mas sem muita atenção ao cliente." 
 
 Parece que a avaliação é um pouco negativa, destacando a média qualidade da comida e a falta de atenção no atendimento.
 Notas de comida: [3]  
-Notas de atendimento: [4]
+Notas de atendimento: [3]
 
 --------------------------------------------------------------------------------
 score_agent (to entrypoint_agent):
 
-***** Suggested tool call (call_PzjROCZMKYTbApzBWfozfIhJ): calculate_overall_score *****
+***** Suggested tool call (call_q3233CfgGQDmAlx7usxk3SVY): calculate_overall_score *****
 Arguments: 
-{"restaurant_name":"China in Box","food_scores":[3],"customer_service_scores":[4]}
+{"restaurant_name":"China in Box","food_scores":[3],"customer_service_scores":[3]}
 ****************************************************************************************
 
 --------------------------------------------------------------------------------
 
 >>>>>>>> EXECUTING FUNCTION calculate_overall_score...
-Call ID: call_PzjROCZMKYTbApzBWfozfIhJ
-Input arguments: {'restaurant_name': 'China in Box', 'food_scores': [3], 'customer_service_scores': [4]}
-soma: + 6.0
+Call ID: call_q3233CfgGQDmAlx7usxk3SVY
+Input arguments: {'restaurant_name': 'China in Box', 'food_scores': [3], 'customer_service_scores': [3]}
+soma: + 5.196152422706632
 N:  1
-overall_score:  5.366563145999495
+overall_score:  4.6475800154489
 entrypoint_agent (to score_agent):
 
-***** Response from calling tool (call_PzjROCZMKYTbApzBWfozfIhJ) *****
-{'China in Box': 5.367}
+***** Response from calling tool (call_q3233CfgGQDmAlx7usxk3SVY) *****
+{'China in Box': 4.648}
 **********************************************************************
 
 --------------------------------------------------------------------------------
 score_agent (to entrypoint_agent):
 
-A pontuação geral do restaurante "China in Box" é 5.367.
+A pontuação geral do restaurante "China in Box" é 4.648.
 
 --------------------------------------------------------------------------------
-A pontuação geral do restaurante "China in Box" é 5.367.
+A pontuação geral do restaurante "China in Box" é 4.648.
 
 ---

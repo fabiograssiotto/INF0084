@@ -1,5 +1,5 @@
 [92mTeste 1 Passou.[0m Esperado:  3.79 Consulta:  Qual é a avaliação média do Bob's?
 [92mTeste 2 Passou.[0m Esperado:  6.19 Consulta:  Qual é a avaliação média do Paris 6?
 [92mTeste 3 Passou.[0m Esperado:  4.64 Consulta:  Quão bom é o restaurante KFC?
-[92mTeste 4 Passou.[0m Esperado:  5.4 Consulta:  Qual é a avaliação média do China in Box?
+[92mTeste 4 Passou.[0m Esperado:  4.64 Consulta:  Qual é a avaliação média do China in Box?
 4/4 Testes Passaram

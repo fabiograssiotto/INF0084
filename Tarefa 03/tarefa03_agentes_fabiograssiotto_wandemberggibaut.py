@@ -75,7 +75,8 @@ def setup_llm():
             'api_key': os.environ.get("OPENAI_API_KEY")
         },
     ]
-    llm_config = {"config_list": config_list, "temperature": 0}
+    # É importante manter a temperatura entre 0-0.2 para resultados mais determinísticos.
+    llm_config = {"config_list": config_list, "temperature": 0.2}
     return llm_config
     
 

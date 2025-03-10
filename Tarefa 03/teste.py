@@ -29,12 +29,15 @@ def public_tests():
     "Quão bom é o restaurante KFC?",
     "Qual é a avaliação média do China in Box?",
     ]
-    # O último resultado não estava batendo, com o último valor repetido. Alterado aqui.
-    # query_results = [3.79, 6.19, 4.64, 4.64]
-    query_results = [3.79, 6.19, 4.64, 5.40]
+    
+    query_results = [3.79, 6.19, 4.64, 4.64]
     tolerances = [0.2, 0.2, 0.2, 0.15]
     contents = []
     
+    # Limpa o conteúdo do arquivo runtime-log.txt no início da execução
+    with open("runtime-log.txt", "w") as f:
+        f.write("")
+        
     # Código modificado para evitar sobreescrita dos resultados e adicionar um separador.
     for query in queries:
         with open("runtime-log.txt", "a") as f:  # Abre o arquivo em modo de adição
