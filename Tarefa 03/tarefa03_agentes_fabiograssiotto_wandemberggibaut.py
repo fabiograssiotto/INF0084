@@ -3,7 +3,6 @@ from autogen import ConversableAgent, AssistantAgent
 import sys
 import os
 import math
-import getpass
 
 def fetch_restaurant_data(restaurant_name: str) -> Dict[str, List[str]]:
     # TODO
@@ -69,15 +68,6 @@ def calculate_overall_score(restaurant_name: str, food_scores: List[int], custom
     return {restaurant_name: round(overall_score, 3)}
 
 def setup_llm():
-    api_key = os.environ.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY") or getpass.getpass("Enter your Groq API key: ")
-
-    '''config_list = [
-        {
-            'model': 'llama-3.3-70b-versatile',
-            'api_key': api_key,
-            "api_type": "groq"
-        },
-    ]'''
 
     config_list = [
         {
@@ -164,21 +154,10 @@ def main(user_query: str):
     # Criar um agente score_agent que seja responsável pelo cálculo final da
     # pontuação, vinculado à função calculate_overall_score.
 
-
-
     score_agent = AssistantAgent("score_agent", 
                                     system_message=score_agent_system_message, 
                                     llm_config=llm_config,
                                     human_input_mode='NEVER')
-    
-    
-    #score_agent.register_for_execution(name="calculate_overall_score")(calculate_overall_score)
-
-    #entrypoint_agent.register_for_llm(name="fetch_restaurant_data", description="Obtém as avaliações de um restaurante específico.")(fetch_restaurant_data)
-    #data_fetch_agent.register_for_execution(name="fetch_restaurant_data")(fetch_restaurant_data)
-
-    #entrypoint_agent.register_for_llm(name="calculate_overall_score", description="Realiza o cálculo final da pontuação do restaurante com base nas avaliações de comida e atendimento.")(calculate_overall_score)
-    #score_agent.register_for_execution(name="calculate_overall_score")(calculate_overall_score)
 
     data_fetch_agent.register_for_llm(name="fetch_restaurant_data", description="Obtém as avaliações de um restaurante específico.")(fetch_restaurant_data)
     entrypoint_agent.register_for_execution(name="fetch_restaurant_data")(fetch_restaurant_data)
@@ -186,7 +165,7 @@ def main(user_query: str):
     score_agent.register_for_llm(name="calculate_overall_score", description="Realiza o cálculo final da pontuação do restaurante.")(calculate_overall_score)
     entrypoint_agent.register_for_execution(name="calculate_overall_score")(calculate_overall_score)
 
-    
+    # Iniciar a conversa a partir do agente de entrada.
     chat_results = entrypoint_agent.initiate_chats(
     [{
             "recipient": data_fetch_agent,
@@ -210,9 +189,6 @@ def main(user_query: str):
         }
     ])
     print(chat_results[-1].summary)
-    
-
-    #reflection_with_llm
 
 # NÃO modifique o código abaixo.
 if __name__ == "__main__":
